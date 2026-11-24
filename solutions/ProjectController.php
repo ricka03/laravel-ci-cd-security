@@ -41,9 +41,14 @@ class ProjectController extends Controller
     }
 
     /** R01 fix: load, then authorize with the Policy (organization ownership check). */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $project = Project::with(['documents', 'organization'])->findOrFail($id);
+        $user = $request->user();
+        // THis is the code/query that needs to be fixed
+
+        $project = Project::with(['documents', 'organization'])->
+        where('organization_id', $user->organization_id)->findOrFail($id);
+
         $this->authorize('view', $project);
 
         return view('projects.show', compact('project'));

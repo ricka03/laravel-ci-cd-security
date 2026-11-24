@@ -58,10 +58,13 @@ class DocumentController extends Controller
      */
     public function downloadNested(Request $request, $project, $document)
     {
-        $projectRecord = Project::findOrFail($project);
+        $user = $request->user();
+        // You can only download record from your organization
+        $projectRecord = Project::where('organization_id', $user->organization_id)->findOrFail($project);
         abort_unless($projectRecord->organization_id === $request->user()->organization_id, 404);
 
-        $file = Document::findOrFail($document);
+        // You can only download file from your project
+        $file = Document::where('project_id',$projectRecord->id)->findOrFail($document);
 
         return Storage::disk('local')->download($file->path, $file->original_name);
     }

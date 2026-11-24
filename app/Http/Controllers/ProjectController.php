@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
@@ -43,17 +44,20 @@ class ProjectController extends Controller
     }
 
     /** Project lookup by raw ID. */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $project = Project::with(['documents', 'organization'])->findOrFail($id);
+        $user = $request->user();
+        $project = Project::with(['documents', 'organization'])-> where('organization_id', $user->organization_id)->findOrFail($id);
 
+        Gate::authorize('view',$project);
         return view('projects.show', compact('project'));
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $project = Project::findOrFail($id);
-        $this->authorize('update', $project);
+        $user = $request->user();
+        $project = Project::where('organization_id', $user->organization_id)->findOrFail($id);
+        Gate::authorize('view', $project);
 
         return view('projects.edit', compact('project'));
     }
@@ -61,8 +65,9 @@ class ProjectController extends Controller
     /** Authorization delegated to ProjectPolicy@update. */
     public function update(UpdateProjectRequest $request, $id): RedirectResponse
     {
-        $project = Project::findOrFail($id);
-        $this->authorize('update', $project);
+        $user = $request->user();
+        $project =  Project::where('organization_id', $user->organization_id)->findOrFail($id);
+        Gate::authorize('update', $project);
 
         $project->update($request->validated());
 
@@ -72,7 +77,7 @@ class ProjectController extends Controller
     /** Authorization delegated to ProjectPolicy@delete. */
     public function destroy(Project $project): RedirectResponse
     {
-        $this->authorize('delete', $project);
+        Gate::authorize('delete', $project);
         $project->delete();
 
         return redirect()->route('projects.index')->with('status', 'Project deleted.');
