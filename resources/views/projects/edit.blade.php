@@ -4,6 +4,7 @@
 <div class="card">
     <h2>Edit project #{{ $project->id }}</h2>
     <form method="POST" action="{{ route('projects.update', $project->id) }}">
+        @csrf
         @method('PUT')
         <label>Name</label>
         <input type="text" name="name" value="{{ old('name', $project->name) }}" required>
