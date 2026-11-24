@@ -47,7 +47,10 @@
     @forelse($project->comments as $comment)
         <div class="comment" style="border-bottom:1px solid #e4e7eb;padding:8px 0">
             <div class="muted">{{ $comment->user->name }} · {{ $comment->created_at }}</div>
-            {!! $comment->content !!}
+           <!-- It will take the comment entered by user as it is -->
+           
+            <!-- {{ $comment->content }} -->
+                {!! nl2br(e($comment->content)) !!}
         </div>
     @empty
         <p class="muted">No comments yet.</p>

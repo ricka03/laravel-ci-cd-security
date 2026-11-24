@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="card">
-    <h2>Search results for: {!! request('q') !!}</h2>
+    <h2>Search results for: {{ request('q') }}</h2>
     <table>
         <thead><tr><th>ID</th><th>Name</th><th>Description</th></tr></thead>
         <tbody>
