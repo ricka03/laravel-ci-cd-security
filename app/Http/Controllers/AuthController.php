@@ -30,13 +30,17 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Invalid credentials.'])->onlyInput('email');
         }
 
+       // $request->session()->invalidate();
+        $request->session()->regenerate();
+
         return redirect()->intended(route('projects.index'));
     }
 
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
-
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('login');
     }
 }
