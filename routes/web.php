@@ -10,6 +10,8 @@ use App\Http\Controllers\ProjectDocumentController;
 use App\Http\Controllers\ProjectSearchController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DocumentController;
+
 
 Route::redirect('/', '/projects');
 
@@ -61,4 +63,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/team', [TeamController::class, 'index'])->name('team.index');
         Route::patch('/team/{user}/role', [TeamController::class, 'updateRole'])->name('team.role');
     });
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/documents', [DocumentController::class, 'store'])
+            ->name('documents.store');
+        Route::view('/upload-test', 'upload-test');
+    });
+
+    Route::middleware('auth')->group(function () {
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download',])->name('documents.download');
+    });
+
 });

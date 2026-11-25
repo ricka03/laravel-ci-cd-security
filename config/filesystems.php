@@ -40,6 +40,14 @@ return [
             'report' => false,
         ],
 
+        'secure_documents' => [
+        'driver' => 'local',
+        'root' => storage_path('app/secure-documents'),
+        'visibility' => 'private',
+        'throw' => true,
+         ],
+
+
     ],
 
     'links' => [
